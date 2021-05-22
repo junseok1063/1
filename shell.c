@@ -21,8 +21,8 @@ int main(void)
 
     user_name =getlogin();
     user_pw = getpwnam( user_name);
-    char hostname[50];
-    int host_len=50;
+    char hostname[MAX_LEN_LINE];
+    int host_len=100;
     if (gethostname(hostname, host_len)==1){
         printf("gethostname Error!\n");
         exit(1);
@@ -37,7 +37,6 @@ int main(void)
     while (true) {
         char *s;
         int len;
-        char username=user_pw->pw_name;
         printf("%c[1;32m",27);
         printf("%s@%s",user_pw->pw_name,hostname);
         printf("%c[0m",27);
@@ -56,13 +55,24 @@ int main(void)
             command[len - 1] = '\0'; 
         }
         if(strncmp(command, "exit", strlen(command))==0) {
+            printf("Exit!");
             return -1;
         }
-        char ChangHomeDir[MAX_LEN_LINE]={"/home/%s",username};
+        char HomeDir[]="/home/";
+        char ChangeHomeDir[MAX_LEN_LINE];
+        strcpy(ChangeHomeDir,HomeDir);
+        strcat(ChangeHomeDir,user_name);
         if(strncmp(command, "cd",strlen(command))==0){
-           cwd=chdir(ChangeHomeDir);
+            cwd=chdir(ChangeHomeDir);
+            cwd=ChangeHomeDir;
         }
-        if(strncmp(command,"cd %s"))
+        if(access(command,F_OK)==0){
+
+              cwd=chdir(command);
+              cwd=command;
+            
+        }
+
       
         printf("%d\n", len);
         
